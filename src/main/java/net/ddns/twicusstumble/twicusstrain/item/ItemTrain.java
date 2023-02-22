@@ -4,7 +4,6 @@ import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
 import net.ddns.twicusstumble.twicusstrain.event.IItemRegisterEvent;
 import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -19,7 +18,7 @@ public class ItemTrain extends Item implements IItemRegisterEvent {
         this.name = name;
         this.setTranslationKey(this.name);
         this.setRegistryName(TwicussTrain.MOD_ID, this.name);
-        this.setCreativeTab(CreativeTabs.MISC);
+        this.setCreativeTab(TwicussTrain.twicussTrainTab);
 
         ItemInit.ITEMS.add(this);
     }

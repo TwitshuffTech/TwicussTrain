@@ -1,7 +1,9 @@
 package net.ddns.twicusstumble.twicusstrain;
 
 import net.ddns.twicusstumble.twicusstrain.proxy.CommonProxy;
+import net.ddns.twicusstumble.twicusstrain.tab.TwicussTrainTab;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -39,6 +41,8 @@ public class TwicussTrain {
 
     @SidedProxy(clientSide = CLIENT_SIDE, serverSide = SERVER_SIDE)
     public static CommonProxy proxy;
+
+    public static CreativeTabs twicussTrainTab = new TwicussTrainTab();
 
     @Mod.EventHandler
     public void construct(FMLConstructionEvent event) {
