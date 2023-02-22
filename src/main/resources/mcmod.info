@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "twicuss_train",
+    "name": "Twicuss Train",
+    "description": "",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "RED_wing"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
