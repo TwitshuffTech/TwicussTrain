@@ -1,10 +1,14 @@
-package net.ddns.twicusstumble.twicuss_train.proxy;
+package net.ddns.twicusstumble.twicusstrain.proxy;
 
-import net.ddns.twicusstumble.twicuss_train.TwicussTrain;
+import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
+import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
+import net.minecraft.item.Item;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber(modid = TwicussTrain.MOD_ID)
 public abstract class CommonProxy {
@@ -18,5 +22,11 @@ public abstract class CommonProxy {
 
     public void postInit(FMLPostInitializationEvent event) {
         TwicussTrain.logger.info("CommonProxy.postInit");
+    }
+
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register<Item> event) {
+        TwicussTrain.logger.info("CommonProxy.registerItems");
+        ItemInit.ITEMS.forEach(f -> f.registerItem(event));
     }
 }

@@ -1,6 +1,6 @@
-package net.ddns.twicusstumble.twicuss_train;
+package net.ddns.twicusstumble.twicusstrain;
 
-import net.ddns.twicusstumble.twicuss_train.proxy.CommonProxy;
+import net.ddns.twicusstumble.twicusstrain.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 )
 public class TwicussTrain {
 
-    public static final String MOD_ID = "twicuss_train";
+    public static final String MOD_ID = "twicusstrain";
     public static final String MOD_NAME = "Twicuss Train";
     public static final String VERSION = "1.0.0";
 
