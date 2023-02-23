@@ -1,6 +1,7 @@
 package net.ddns.twicusstumble.twicusstrain.proxy;
 
 import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
+import net.ddns.twicusstumble.twicusstrain.init.EntityInit;
 import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -18,5 +19,6 @@ public class ClientProxy extends CommonProxy {
         TwicussTrain.logger.info("ClientProxy.registerModels");
 
         ItemInit.ITEMS.forEach(f -> f.registerModel(event));
+        EntityInit.ENTITIES.forEach(f -> f.registerModel(event));
     }
 }

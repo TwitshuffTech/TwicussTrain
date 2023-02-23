@@ -28,6 +28,7 @@ public class ItemTrain extends Item implements IItemRegisterEvent {
         event.getRegistry().register(this);
     }
 
+    @Override
     public void registerModel(ModelRegistryEvent event) {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(new ResourceLocation(TwicussTrain.MOD_ID, this.name), "inventory"));
     }
