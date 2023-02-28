@@ -35,32 +35,25 @@ public class ItemTrain extends Item implements IItemRegisterEvent {
         ItemInit.ITEMS.add(this);
     }
 
-    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-    {
+    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         IBlockState iblockstate = worldIn.getBlockState(pos);
 
-        if (!BlockRailBase.isRailBlock(iblockstate))
-        {
+        if (!BlockRailBase.isRailBlock(iblockstate)) {
             return EnumActionResult.FAIL;
-        }
-        else
-        {
+        } else {
             ItemStack itemstack = player.getHeldItem(hand);
 
-            if (!worldIn.isRemote)
-            {
+            if (!worldIn.isRemote) {
                 BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = iblockstate.getBlock() instanceof BlockRailBase ? ((BlockRailBase)iblockstate.getBlock()).getRailDirection(worldIn, pos, iblockstate, null) : BlockRailBase.EnumRailDirection.NORTH_SOUTH;
                 double d0 = 0.0D;
 
-                if (blockrailbase$enumraildirection.isAscending())
-                {
+                if (blockrailbase$enumraildirection.isAscending()) {
                     d0 = 0.5D;
                 }
 
                 EntityTrain entityTrain = new EntityTrain(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.0625D + d0, (double)pos.getZ() + 0.5D);
 
-                if (itemstack.hasDisplayName())
-                {
+                if (itemstack.hasDisplayName()) {
                     entityTrain.setCustomNameTag(itemstack.getDisplayName());
                 }
 
