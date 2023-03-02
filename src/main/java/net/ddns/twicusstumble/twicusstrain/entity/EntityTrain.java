@@ -1,19 +1,17 @@
 package net.ddns.twicusstumble.twicusstrain.entity;
 
 import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
-import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
 import net.ddns.twicusstumble.twicusstrain.item.ItemWrench;
 import net.minecraft.block.BlockRailBase;
-import net.minecraft.block.BlockRailPowered;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -26,6 +24,8 @@ public class EntityTrain extends EntityMinecart {
     public double throttle = 0;
     public double throttleSpeed = 0.1D;
     public double maxSpeed = 0.6D;
+    public boolean isSelected = false;
+    public List<EntityPlayer> players = new ArrayList<EntityPlayer>();
     protected List<EntityTrain> connectedTrains = new ArrayList<EntityTrain>();
     protected double connectionDistance = 1.5D;
     protected boolean isPowerCar = false;
@@ -51,25 +51,11 @@ public class EntityTrain extends EntityMinecart {
         if (player.isSneaking()) {
             if (!this.world.isRemote) {
                 ItemStack itemStack = player.getHeldItem(hand);
+
                 if (itemStack.getItem() instanceof ItemWrench) {
-                    ItemWrench wrench = (ItemWrench)itemStack.getItem();
-                    TwicussTrain.logger.info(wrench.cachedTrain);
-                    if (wrench.cachedTrain == null) {
-                        wrench.cachedTrain = this;
-                        return true;
-                    } else {
-                        if (this.checkIfConnectable(wrench.cachedTrain)) {
-                            this.connectedTrains.add(wrench.cachedTrain);
-                            wrench.cachedTrain.connectedTrains.add(this);
+                    this.connectTrains(player);
 
-                            TwicussTrain.logger.info("connected");
-                            TwicussTrain.logger.info(this.connectedTrains);
-                            wrench.cachedTrain = null;
-
-                            return true;
-                        }
-                        wrench.cachedTrain = null;
-                    }
+                    return true;
                 }
             }
             return false;
@@ -80,6 +66,40 @@ public class EntityTrain extends EntityMinecart {
 
             return true;
         }
+    }
+
+    public boolean connectTrains(EntityPlayer player) {
+        if (this.connectedTrains.size() >= 2) {
+            return false;
+        }
+
+        double x = this.posX;
+        double y = this.posY;
+        double z = this.posZ;
+        boolean flag = false;
+
+        for (EntityTrain entityTrain : this.world.getEntitiesWithinAABB(EntityTrain.class, new AxisAlignedBB(x - 7.0D, y - 7.0D, z - 7.0D, x + 7.0D, y + 7.0D, z + 7.0D))) {
+            if (entityTrain.isSelected && entityTrain.players.contains(player) && entityTrain.connectedTrains.size() < 2 && entityTrain != this) {
+                this.connectedTrains.add(entityTrain);
+                entityTrain.connectedTrains.add(this);
+
+                entityTrain.isSelected = false;
+                entityTrain.players.remove(player);
+
+                if (this.connectedTrains.size() >= 2) {
+                    return true;
+                }
+
+                flag = true;
+            }
+        }
+
+        if (!flag) {
+            this.isSelected = true;
+            this.players.add(player);
+        }
+
+        return flag;
     }
 
     @Override
@@ -143,16 +163,6 @@ public class EntityTrain extends EntityMinecart {
                 }
             }
         }
-    }
-
-    public boolean checkIfConnectable(EntityTrain targetTrain) {
-        if (this.connectedTrains.size() >= 2 || targetTrain.connectedTrains.size() >= 2) {
-            return false;
-        }
-        if (this.getDistance(targetTrain) > 1.5D) {
-            return false;
-        }
-        return true;
     }
 
     public void updateConnection() {

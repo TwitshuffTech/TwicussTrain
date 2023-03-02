@@ -12,7 +12,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 
 public class ItemWrench extends Item implements IItemRegisterEvent {
-    public EntityTrain cachedTrain;
     private final String name;
 
     public ItemWrench(String name) {
