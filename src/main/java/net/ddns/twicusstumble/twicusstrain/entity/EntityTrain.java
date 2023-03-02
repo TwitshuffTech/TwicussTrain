@@ -1,6 +1,8 @@
 package net.ddns.twicusstumble.twicusstrain.entity;
 
 import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
+import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
+import net.ddns.twicusstumble.twicusstrain.item.ItemWrench;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.BlockRailPowered;
 import net.minecraft.block.state.IBlockState;
@@ -10,16 +12,23 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EntityTrain extends EntityMinecart {
     public double throttle = 0;
     public double throttleSpeed = 0.1D;
     public double maxSpeed = 0.6D;
+    protected List<EntityTrain> connectedTrains = new ArrayList<EntityTrain>();
+    protected double connectionDistance = 1.5D;
+    protected boolean isPowerCar = false;
 
     protected boolean canBePushed = false;
 
@@ -40,6 +49,29 @@ public class EntityTrain extends EntityMinecart {
         }
 
         if (player.isSneaking()) {
+            if (!this.world.isRemote) {
+                ItemStack itemStack = player.getHeldItem(hand);
+                if (itemStack.getItem() instanceof ItemWrench) {
+                    ItemWrench wrench = (ItemWrench)itemStack.getItem();
+                    TwicussTrain.logger.info(wrench.cachedTrain);
+                    if (wrench.cachedTrain == null) {
+                        wrench.cachedTrain = this;
+                        return true;
+                    } else {
+                        if (this.checkIfConnectable(wrench.cachedTrain)) {
+                            this.connectedTrains.add(wrench.cachedTrain);
+                            wrench.cachedTrain.connectedTrains.add(this);
+
+                            TwicussTrain.logger.info("connected");
+                            TwicussTrain.logger.info(this.connectedTrains);
+                            wrench.cachedTrain = null;
+
+                            return true;
+                        }
+                        wrench.cachedTrain = null;
+                    }
+                }
+            }
             return false;
         } else {
             if (!this.world.isRemote) {
@@ -65,6 +97,8 @@ public class EntityTrain extends EntityMinecart {
                 double input = (double) ((EntityLivingBase) entity).moveForward;
                 this.changeThrottle(input);
             }
+
+            this.updateConnection();
         }
     }
 
@@ -85,18 +119,20 @@ public class EntityTrain extends EntityMinecart {
 
         Entity entity = this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
 
+        if (squaredSpeed < 0.0001D) {
+            if (this.isPowerCar) {
+                this.isPowerCar = false;
+            }
+        }
         if (entity instanceof EntityLivingBase) {
-            if (targetSpeed > 0 && squaredSpeed < 0.0001D) {
-                this.motionX = 0;
-                this.motionZ = 0;
+            if (targetSpeed > 0 && squaredSpeed < 0.0001D && (double)((EntityLivingBase)entity).moveForward > 0.0D) {
+                double x = -Math.sin((double)(entity.rotationYaw * 0.017453292F));
+                double z = Math.cos((double)(entity.rotationYaw * 0.017453292F));
 
-                if ((double)((EntityLivingBase)entity).moveForward > 0.0D) {
-                    double x = -Math.sin((double)(entity.rotationYaw * 0.017453292F));
-                    double z = Math.cos((double)(entity.rotationYaw * 0.017453292F));
+                this.motionX += x * 0.1D;
+                this.motionZ += z * 0.1D;
 
-                    this.motionX += x * 0.1D;
-                    this.motionZ += z * 0.1D;
-                }
+                this.isPowerCar = true;
             } else {
                 if (targetSpeed * Math.abs(targetSpeed) > squaredSpeed) {
                     this.motionX *= 1.1D;
@@ -107,6 +143,45 @@ public class EntityTrain extends EntityMinecart {
                 }
             }
         }
+    }
+
+    public boolean checkIfConnectable(EntityTrain targetTrain) {
+        if (this.connectedTrains.size() >= 2 || targetTrain.connectedTrains.size() >= 2) {
+            return false;
+        }
+        if (this.getDistance(targetTrain) > 1.5D) {
+            return false;
+        }
+        return true;
+    }
+
+    public void updateConnection() {
+        List<EntityTrain> removingCache = new ArrayList<EntityTrain>();
+        double distanceCache = 0;
+
+        for (int i = 0; i < this.connectedTrains.size(); i++) {
+            EntityTrain train = this.connectedTrains.get(i);
+
+            if (train.isDead) {
+                removingCache.add(train);
+                train.connectedTrains.remove(this);
+            } else if (!this.isPowerCar) {
+                double distance = this.getDistance(train);
+                if (Math.abs(distance - this.connectionDistance) > distanceCache) {
+                    distanceCache = distance;
+
+                    double x = (this.posX - train.posX) / distance;
+                    double y = (this.posY - train.posY) / distance;
+                    double z = (this.posZ - train.posZ) / distance;
+
+                    this.posX = train.posX + x * connectionDistance;
+                    this.posY = train.posY + y * connectionDistance;
+                    this.posZ = train.posZ + z * connectionDistance;
+                }
+            }
+        }
+
+        this.connectedTrains.removeAll(removingCache);
     }
 
     @Override
