@@ -10,6 +10,10 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -25,10 +29,11 @@ public class EntityTrain extends EntityMinecart {
     public double throttleSpeed = 0.1D;
     public double maxSpeed = 0.6D;
     public boolean isSelected = false;
-    public List<EntityPlayer> players = new ArrayList<EntityPlayer>();
+    public List<EntityPlayer> players = new ArrayList<>();
     protected List<EntityTrain> connectedTrains = new ArrayList<EntityTrain>();
     protected double connectionDistance = 1.5D;
     protected boolean isPowerCar = false;
+    private NBTTagList trainNBTTags = null;
 
     protected boolean canBePushed = false;
 
@@ -109,6 +114,8 @@ public class EntityTrain extends EntityMinecart {
 
     @Override
     public void onUpdate() {
+        this.reconnect();
+
         super.onUpdate();
 
         if (!this.world.isRemote) {
@@ -122,6 +129,24 @@ public class EntityTrain extends EntityMinecart {
         }
     }
 
+    public void reconnect() {
+        if (this.trainNBTTags != null) {
+            double x = this.posX;
+            double y = this.posY;
+            double z = this.posZ;
+
+            for (EntityTrain entityTrain : this.world.getEntitiesWithinAABB(EntityTrain.class, new AxisAlignedBB(x - 2.0D, y - 2.0D, z - 2.0D, x + 2.0D, y + 2.0D, z + 2.0D))) {
+                for (NBTBase uuid : trainNBTTags) {
+                    if (entityTrain.getPersistentID().toString().equals(uuid.toString().replace("\"", ""))) {
+                        this.connectedTrains.add(entityTrain);
+                    }
+                }
+            }
+
+            this.trainNBTTags = null;
+        }
+    }
+
     public void changeThrottle(double input) {
         if (input > 0) {
             this.throttle += this.throttleSpeed;
@@ -130,7 +155,7 @@ public class EntityTrain extends EntityMinecart {
         }
 
         this.throttle = MathHelper.clamp(this.throttle, -1, 1);
-        TwicussTrain.logger.info(this.throttle);
+        //TwicussTrain.logger.info(this.throttle);
     }
 
     public void applyThrottle() {
@@ -343,5 +368,31 @@ public class EntityTrain extends EntityMinecart {
     @Override
     public Type getType() {
         return Type.RIDEABLE;
+    }
+
+    @Override
+    protected void readEntityFromNBT(NBTTagCompound compound) {
+        super.readEntityFromNBT(compound);
+
+        if (compound.getBoolean("Connected")) {
+            this.trainNBTTags = (NBTTagList) compound.getTag("ConnectedTrains");
+        }
+    }
+
+    @Override
+    protected void writeEntityToNBT(NBTTagCompound compound) {
+        super.writeEntityToNBT(compound);
+
+        if (this.connectedTrains.size() > 0) {
+            compound.setBoolean("Connected", true);
+
+            NBTTagList trains = new NBTTagList();
+            for (EntityTrain train : this.connectedTrains) {
+                trains.appendTag(new NBTTagString(train.getPersistentID().toString()));
+            }
+            compound.setTag("ConnectedTrains", trains);
+        } else {
+            compound.setBoolean("Connected", false);
+        }
     }
 }
