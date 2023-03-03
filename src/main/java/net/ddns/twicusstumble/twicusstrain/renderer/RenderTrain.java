@@ -16,7 +16,7 @@ import net.minecraft.util.math.Vec3d;
 
 
 public class RenderTrain extends Render<EntityTrain> {
-    private static final ResourceLocation TRAIN_TEXTURE = new ResourceLocation(TwicussTrain.MOD_ID, "textures/entity/twicusstrain.png");
+    private static final ResourceLocation TRAIN_TEXTURE = new ResourceLocation(TwicussTrain.MOD_ID, "textures/entity/train.png");
     private final ModelBase modelTrain = new ModelTrain();
 
     public RenderTrain(RenderManager renderManagerIn) {
@@ -68,7 +68,7 @@ public class RenderTrain extends Render<EntityTrain> {
             }
         }
 
-        GlStateManager.translate((float)x, (float)y + 0.375F, (float)z);
+        GlStateManager.translate((float)x, (float)y + 0.5F, (float)z);
         GlStateManager.rotate(180.0F - entityYaw, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(-f3, 0.0F, 0.0F, 1.0F);
         float f5 = (float)entity.getRollingAmplitude() - partialTicks;

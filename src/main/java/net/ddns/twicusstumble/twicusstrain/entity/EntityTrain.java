@@ -1,6 +1,6 @@
 package net.ddns.twicusstumble.twicusstrain.entity;
 
-import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
+import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
 import net.ddns.twicusstumble.twicusstrain.item.ItemWrench;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.state.IBlockState;
@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -114,11 +115,11 @@ public class EntityTrain extends EntityMinecart {
 
     @Override
     public void onUpdate() {
-        this.reconnect();
-
         super.onUpdate();
 
         if (!this.world.isRemote) {
+            this.reconnect();
+
             Entity entity = this.getPassengers().isEmpty() ? null : (Entity) this.getPassengers().get(0);
             if (entity instanceof EntityLivingBase) {
                 double input = (double) ((EntityLivingBase) entity).moveForward;
@@ -154,8 +155,7 @@ public class EntityTrain extends EntityMinecart {
             this.throttle -= this.throttleSpeed;
         }
 
-        this.throttle = MathHelper.clamp(this.throttle, -1, 1);
-        //TwicussTrain.logger.info(this.throttle);
+        this.throttle = MathHelper.clamp(this.throttle, -0.1, 1);
     }
 
     public void applyThrottle() {
@@ -368,6 +368,35 @@ public class EntityTrain extends EntityMinecart {
     @Override
     public Type getType() {
         return Type.RIDEABLE;
+    }
+
+    @Override
+    public double getMountedYOffset()
+    {
+        return (double)this.height * 0.75;
+    }
+
+    @Override
+    public ItemStack getCartItem() {
+        return new ItemStack(ItemInit.ITEM_TRAIN);
+    }
+
+    @Override
+    public void killMinecart(DamageSource source)
+    {
+        this.setDead();
+
+        if (this.world.getGameRules().getBoolean("doEntityDrops"))
+        {
+            ItemStack itemstack = new ItemStack(ItemInit.ITEM_TRAIN, 1);
+
+            if (this.hasCustomName())
+            {
+                itemstack.setStackDisplayName(this.getCustomNameTag());
+            }
+
+            this.entityDropItem(itemstack, 0.0F);
+        }
     }
 
     @Override
