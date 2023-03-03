@@ -29,6 +29,7 @@ public class ItemTrain extends Item implements IItemRegisterEvent {
         this.setTranslationKey(this.name);
         this.setRegistryName(TwicussTrain.MOD_ID, this.name);
         this.setCreativeTab(TwicussTrain.twicussTrainTab);
+        this.setMaxStackSize(1);
 
         ItemInit.ITEMS.add(this);
     }

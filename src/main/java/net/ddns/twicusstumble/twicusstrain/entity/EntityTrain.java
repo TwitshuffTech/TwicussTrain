@@ -1,5 +1,6 @@
 package net.ddns.twicusstumble.twicusstrain.entity;
 
+import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
 import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
 import net.ddns.twicusstumble.twicusstrain.item.ItemWrench;
 import net.minecraft.block.BlockRailBase;
@@ -21,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import scala.tools.nsc.doc.model.Trait;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,13 +207,51 @@ public class EntityTrain extends EntityMinecart {
                 if (Math.abs(distance - this.connectionDistance) > distanceCache) {
                     distanceCache = distance;
 
-                    double x = (this.posX - train.posX) / distance;
-                    double y = (this.posY - train.posY) / distance;
-                    double z = (this.posZ - train.posZ) / distance;
+                    double normalizedX = (this.posX - train.posX) / distance;
+                    double normalizedY = (this.posY - train.posY) / distance;
+                    double normalizedZ = (this.posZ - train.posZ) / distance;
 
-                    this.posX = train.posX + x * connectionDistance;
-                    this.posY = train.posY + y * connectionDistance;
-                    this.posZ = train.posZ + z * connectionDistance;
+                    double x = train.posX + normalizedX * connectionDistance;
+                    double y = train.posY + normalizedY * connectionDistance;
+                    double z = train.posZ + normalizedZ * connectionDistance;
+
+                    BlockPos blockPos = new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z));
+                    IBlockState iBlockState = this.world.getBlockState(blockPos);
+
+                    if (!BlockRailBase.isRailBlock(iBlockState)) {
+                        BlockPos targetBlockPos = new BlockPos(MathHelper.floor(train.posX), MathHelper.floor(train.posY), MathHelper.floor(train.posZ));
+                        IBlockState targetIBlockState = this.world.getBlockState(targetBlockPos);
+
+                        if (BlockRailBase.isRailBlock(targetIBlockState)) {
+                            double cache = 100;
+                            double cacheX = 0;
+                            double cacheY = 0;
+                            double cacheZ = 0;
+                            for (int j = MathHelper.floor(x - 3); j < MathHelper.ceil(x + 3); j++) {
+                                for (int k = MathHelper.floor(y - 3); k < MathHelper.ceil(y + 3); k++) {
+                                    for (int l = MathHelper.floor(z - 3); l < MathHelper.ceil(z + 3); l++) {
+                                        if (BlockRailBase.isRailBlock(this.world.getBlockState(new BlockPos(j, k, l)))) {
+                                            double d = Math.pow((x - (j + 0.5D)), 2) + Math.pow((y - (k + 0.0625D)), 2) + Math.pow((z - (l + 0.5D)), 2);
+                                            if (d < cache) {
+                                                TwicussTrain.logger.info("target position: " + x + " " + y + " " + z + "\n rail position: " + (j + 0.5D) + " " + (k + 0.0625D) + " " + (l + 0.5D) + "\nd: " + Math.sqrt(d));
+                                                cache = d;
+                                                cacheX = j + 0.5D;
+                                                cacheY = k + 0.0625D;
+                                                cacheZ = l + 0.5D;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            x = cacheX;
+                            y = cacheY;
+                            z = cacheZ;
+                        }
+                    }
+
+                    this.posX = x;
+                    this.posY = y;
+                    this.posZ = z;
                 }
             }
         }
