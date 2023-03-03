@@ -1,6 +1,5 @@
 package net.ddns.twicusstumble.twicusstrain.entity;
 
-import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
 import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
 import net.ddns.twicusstumble.twicusstrain.item.ItemWrench;
 import net.minecraft.block.BlockRailBase;
@@ -74,13 +73,13 @@ public abstract class EntityTrainBase extends EntityMinecart {
         double z = this.posZ;
         boolean flag = false;
 
-        for (EntityTrain entityTrain : this.world.getEntitiesWithinAABB(EntityTrain.class, new AxisAlignedBB(x - 7.0D, y - 7.0D, z - 7.0D, x + 7.0D, y + 7.0D, z + 7.0D))) {
-            if (entityTrain.isSelected && entityTrain.players.contains(player) && entityTrain.connectedTrains.size() < 2 && entityTrain != this) {
-                this.connectedTrains.add(entityTrain);
-                entityTrain.connectedTrains.add(this);
+        for (EntityTrainBase entityTrainBase : this.world.getEntitiesWithinAABB(EntityTrainBase.class, new AxisAlignedBB(x - 7.0D, y - 7.0D, z - 7.0D, x + 7.0D, y + 7.0D, z + 7.0D))) {
+            if (entityTrainBase.isSelected && entityTrainBase.players.contains(player) && entityTrainBase.connectedTrains.size() < 2 && entityTrainBase != this) {
+                this.connectedTrains.add(entityTrainBase);
+                entityTrainBase.connectedTrains.add(this);
 
-                entityTrain.isSelected = false;
-                entityTrain.players.remove(player);
+                entityTrainBase.isSelected = false;
+                entityTrainBase.players.remove(player);
 
                 if (this.connectedTrains.size() >= 2) {
                     return true;
@@ -119,10 +118,10 @@ public abstract class EntityTrainBase extends EntityMinecart {
             double y = this.posY;
             double z = this.posZ;
 
-            for (EntityTrain entityTrain : this.world.getEntitiesWithinAABB(EntityTrain.class, new AxisAlignedBB(x - 2.0D, y - 2.0D, z - 2.0D, x + 2.0D, y + 2.0D, z + 2.0D))) {
+            for (EntityTrainBase entityTrainBase : this.world.getEntitiesWithinAABB(EntityTrainBase.class, new AxisAlignedBB(x - 2.0D, y - 2.0D, z - 2.0D, x + 2.0D, y + 2.0D, z + 2.0D))) {
                 for (NBTBase uuid : trainNBTTags) {
-                    if (entityTrain.getPersistentID().toString().equals(uuid.toString().replace("\"", ""))) {
-                        this.connectedTrains.add(entityTrain);
+                    if (entityTrainBase.getPersistentID().toString().equals(uuid.toString().replace("\"", ""))) {
+                        this.connectedTrains.add(entityTrainBase);
                     }
                 }
             }
@@ -356,6 +355,11 @@ public abstract class EntityTrainBase extends EntityMinecart {
 
             this.entityDropItem(itemstack, 0.0F);
         }
+    }
+
+    @Override
+    public Type getType() {
+        return null;
     }
 
     @Override

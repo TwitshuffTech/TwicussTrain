@@ -41,7 +41,9 @@ public class EntityTrain extends EntityTrainBase {
 
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-        super.processInitialInteract(player, hand);
+        if (super.processInitialInteract(player, hand)) {
+            return true;
+        };
 
         if (!player.isSneaking()) {
             if (!this.world.isRemote) {
@@ -109,11 +111,6 @@ public class EntityTrain extends EntityTrainBase {
                 }
             }
         }
-    }
-
-    @Override
-    public Type getType() {
-        return Type.RIDEABLE;
     }
 
     @Override
