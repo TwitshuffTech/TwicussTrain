@@ -2,7 +2,7 @@
   {
     "modid": "twicuss_train",
     "name": "Twicuss Train",
-    "description": "",
+    "description": "add connectable minecart",
     "version": "${version}",
     "mcversion": "${mcversion}",
     "url": "",
