@@ -1,8 +1,8 @@
 package net.ddns.twicusstumble.twicusstrain.renderer;
 
 import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
-import net.ddns.twicusstumble.twicusstrain.entity.EntityTrain;
-import net.ddns.twicusstumble.twicusstrain.model.ModelTrain;
+import net.ddns.twicusstumble.twicusstrain.entity.EntityCargoTrain;
+import net.ddns.twicusstumble.twicusstrain.model.ModelCargoTrain;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,17 +14,16 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
+public class RenderCargoTrain extends Render<EntityCargoTrain> {
+    private static final ResourceLocation TRAIN_TEXTURE = new ResourceLocation(TwicussTrain.MOD_ID, "textures/entity/cargo_train.png");
+    private final ModelBase modelCargoTrain = new ModelCargoTrain();
 
-public class RenderTrain extends Render<EntityTrain> {
-    private static final ResourceLocation TRAIN_TEXTURE = new ResourceLocation(TwicussTrain.MOD_ID, "textures/entity/train.png");
-    private final ModelBase modelTrain = new ModelTrain();
-
-    public RenderTrain(RenderManager renderManagerIn) {
+    public RenderCargoTrain(RenderManager renderManagerIn) {
         super(renderManagerIn);
     }
 
     @Override
-    public void doRender(EntityTrain entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(EntityCargoTrain entity, double x, double y, double z, float entityYaw, float partialTicks) {
         GlStateManager.pushMatrix();
         this.bindEntityTexture(entity);
         long i = (long)entity.getEntityId() * 493286711L;
@@ -99,7 +98,7 @@ public class RenderTrain extends Render<EntityTrain> {
         }
 
         GlStateManager.scale(-1.0F, -1.0F, 1.0F);
-        this.modelTrain.render(entity, 0, 0, -0.1F, 0, 0, 0.0625F);
+        this.modelCargoTrain.render(entity, 0, 0, -0.1F, 0, 0, 0.0625F);
         GlStateManager.popMatrix();
 
         if (this.renderOutlines) {
@@ -111,7 +110,7 @@ public class RenderTrain extends Render<EntityTrain> {
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(EntityTrain entity) {
+    protected ResourceLocation getEntityTexture(EntityCargoTrain entity) {
         return TRAIN_TEXTURE;
     }
 }

@@ -1,6 +1,10 @@
 # Items
 item.train.name=Twicuss Train
+item.cargo_train.name=Twicuss Train with Chest
 item.wrench.name=レンチ
+
+# Entities
+entity.cargo_train.name=Twicuss Train with Chest
 
 # Tabs
 itemGroup.twicusstrain_tab=Twicuss Train

@@ -1,6 +1,7 @@
 package net.ddns.twicusstumble.twicusstrain.proxy;
 
 import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
+import net.ddns.twicusstumble.twicusstrain.entity.EntityCargoTrain;
 import net.ddns.twicusstumble.twicusstrain.entity.EntityTrain;
 import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
 import net.minecraft.item.Item;
@@ -39,5 +40,6 @@ public abstract class CommonProxy {
         TwicussTrain.logger.info("CommonProxy.registerEntities");
 
         EntityRegistry.registerModEntity(new ResourceLocation(TwicussTrain.MOD_ID, "train"), EntityTrain.class, "train", 0, TwicussTrain.INSTANCE, 50, 1, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(TwicussTrain.MOD_ID, "cargo_train"), EntityCargoTrain.class, "cargo_train", 1, TwicussTrain.INSTANCE, 50, 1, true);
     }
 }

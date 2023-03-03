@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X",
+    "Y"
+  ],
+  "key": {
+    "X": {
+      "item": "minecraft:chest"
+    },
+    "Y": {
+      "item": "twicusstrain:train",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "twicusstrain:cargo_train",
+    "data": 0,
+    "count": 1
+  }
+}

@@ -1,8 +1,10 @@
 package net.ddns.twicusstumble.twicusstrain.proxy;
 
 import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
+import net.ddns.twicusstumble.twicusstrain.entity.EntityCargoTrain;
 import net.ddns.twicusstumble.twicusstrain.entity.EntityTrain;
 import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
+import net.ddns.twicusstumble.twicusstrain.renderer.RenderCargoTrain;
 import net.ddns.twicusstumble.twicusstrain.renderer.RenderTrain;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -27,8 +29,15 @@ public class ClientProxy extends CommonProxy {
 
         RenderingRegistry.registerEntityRenderingHandler(EntityTrain.class, new IRenderFactory<EntityTrain>() {
             @Override
-            public Render<? super EntityTrain> createRenderFor(RenderManager manager) {
+            public Render<EntityTrain> createRenderFor(RenderManager manager) {
                 return new RenderTrain(manager);
+            }
+        });
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityCargoTrain.class, new IRenderFactory<EntityCargoTrain>() {
+            @Override
+            public Render<EntityCargoTrain> createRenderFor(RenderManager manager) {
+                return new RenderCargoTrain(manager);
             }
         });
     }
