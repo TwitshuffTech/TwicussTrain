@@ -27,7 +27,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 
 public class ItemTrain extends Item implements IItemRegisterEvent {
-    private static final IBehaviorDispenseItem CARGO_TRAIN_DISPENSER_BEHAVIOR = new BehaviorDefaultDispenseItem() {
+    private static final IBehaviorDispenseItem TRAIN_DISPENSER_BEHAVIOR = new BehaviorDefaultDispenseItem() {
         private final BehaviorDefaultDispenseItem behaviourDefaultDispenseItem = new BehaviorDefaultDispenseItem();
         public ItemStack dispenseStack(IBlockSource source, ItemStack stack) {
             EnumFacing enumfacing = (EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING);
@@ -87,6 +87,7 @@ public class ItemTrain extends Item implements IItemRegisterEvent {
         this.setMaxStackSize(1);
 
         ItemInit.ITEMS.add(this);
+        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(this, TRAIN_DISPENSER_BEHAVIOR);
     }
 
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
