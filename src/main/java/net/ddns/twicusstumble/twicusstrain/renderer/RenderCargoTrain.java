@@ -63,7 +63,7 @@ public class RenderCargoTrain extends Render<EntityCargoTrain> {
             }
         }
 
-        GlStateManager.translate((float)x, (float)y + 0.5F, (float)z);
+        GlStateManager.translate((float)x, (float)y + 0.5625F, (float)z);
         GlStateManager.rotate(180.0F - entityYaw, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(-f3, 0.0F, 0.0F, 1.0F);
         float f5 = (float)entity.getRollingAmplitude() - partialTicks;
