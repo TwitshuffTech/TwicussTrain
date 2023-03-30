@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "twicusstrain:yellow_line" },
+    "facing=south": { "model": "twicusstrain:yellow_line", "y": 180 },
+    "facing=west":  { "model": "twicusstrain:yellow_line", "y": 270 },
+    "facing=east":  { "model": "twicusstrain:yellow_line", "y": 90 }
+  }
+}

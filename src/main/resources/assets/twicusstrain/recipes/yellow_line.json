@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "minecraft:carpet",
+      "data": 4
+    }
+  },
+  "result": {
+    "item": "twicusstrain:yellow_line",
+    "data": 0,
+    "count": 3
+  }
+}

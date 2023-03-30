@@ -3,7 +3,9 @@ package net.ddns.twicusstumble.twicusstrain.proxy;
 import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
 import net.ddns.twicusstumble.twicusstrain.entity.EntityCargoTrain;
 import net.ddns.twicusstumble.twicusstrain.entity.EntityTrain;
+import net.ddns.twicusstumble.twicusstrain.init.BlockInit;
 import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -33,6 +35,12 @@ public abstract class CommonProxy {
     public void registerItems(RegistryEvent.Register<Item> event) {
         TwicussTrain.logger.info("CommonProxy.registerItems");
         ItemInit.ITEMS.forEach(f -> f.registerItem(event));
+        ItemInit.ITEM_BLOCKS.forEach(f -> event.getRegistry().register(f));
+    }
+
+    @SubscribeEvent
+    public void registerBlocks(RegistryEvent.Register<Block> event) {
+        BlockInit.BLOCKS.forEach(f -> f.registerBlock(event));
     }
 
     @SubscribeEvent

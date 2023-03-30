@@ -196,8 +196,7 @@ public abstract class EntityTrainBase extends EntityMinecart {
     }
 
     @Override
-    protected void moveAlongTrack(BlockPos pos, IBlockState state)
-    {
+    protected void moveAlongTrack(BlockPos pos, IBlockState state) {
         this.fallDistance = 0.0F;
         Vec3d vec3d = this.getPos(this.posX, this.posY, this.posZ);
         this.posY = (double)pos.getY();
@@ -207,8 +206,7 @@ public abstract class EntityTrainBase extends EntityMinecart {
         double slopeAdjustment = getSlopeAdjustment();
         BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = blockrailbase.getRailDirection(world, pos, state, this);
 
-        switch (blockrailbase$enumraildirection)
-        {
+        switch (blockrailbase$enumraildirection) {
             case ASCENDING_EAST:
                 this.motionX -= slopeAdjustment;
                 ++this.posY;
@@ -232,16 +230,14 @@ public abstract class EntityTrainBase extends EntityMinecart {
         double d3 = Math.sqrt(d1 * d1 + d2 * d2);
         double d4 = this.motionX * d1 + this.motionZ * d2;
 
-        if (d4 < 0.0D)
-        {
+        if (d4 < 0.0D) {
             d1 = -d1;
             d2 = -d2;
         }
 
         double d5 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
 
-        if (d5 > 2.0D)
-        {
+        if (d5 > 2.0D) {
             d5 = 2.0D;
         }
 
@@ -256,18 +252,13 @@ public abstract class EntityTrainBase extends EntityMinecart {
         d2 = d21 - d19;
         double d10;
 
-        if (d1 == 0.0D)
-        {
+        if (d1 == 0.0D) {
             this.posX = (double)pos.getX() + 0.5D;
             d10 = this.posZ - (double)pos.getZ();
-        }
-        else if (d2 == 0.0D)
-        {
+        } else if (d2 == 0.0D) {
             this.posZ = (double)pos.getZ() + 0.5D;
             d10 = this.posX - (double)pos.getX();
-        }
-        else
-        {
+        } else {
             double d11 = this.posX - d18;
             double d12 = this.posZ - d19;
             d10 = (d11 * d1 + d12 * d2) * 2.0D;
@@ -278,25 +269,20 @@ public abstract class EntityTrainBase extends EntityMinecart {
         this.setPosition(this.posX, this.posY, this.posZ);
         this.moveMinecartOnRail(pos);
 
-        if (aint[0][1] != 0 && MathHelper.floor(this.posX) - pos.getX() == aint[0][0] && MathHelper.floor(this.posZ) - pos.getZ() == aint[0][2])
-        {
+        if (aint[0][1] != 0 && MathHelper.floor(this.posX) - pos.getX() == aint[0][0] && MathHelper.floor(this.posZ) - pos.getZ() == aint[0][2]) {
             this.setPosition(this.posX, this.posY + (double)aint[0][1], this.posZ);
-        }
-        else if (aint[1][1] != 0 && MathHelper.floor(this.posX) - pos.getX() == aint[1][0] && MathHelper.floor(this.posZ) - pos.getZ() == aint[1][2])
-        {
+        } else if (aint[1][1] != 0 && MathHelper.floor(this.posX) - pos.getX() == aint[1][0] && MathHelper.floor(this.posZ) - pos.getZ() == aint[1][2]) {
             this.setPosition(this.posX, this.posY + (double)aint[1][1], this.posZ);
         }
 
         this.applyDrag();
         Vec3d vec3d1 = this.getPos(this.posX, this.posY, this.posZ);
 
-        if (vec3d1 != null && vec3d != null)
-        {
+        if (vec3d1 != null && vec3d != null) {
             double d14 = (vec3d.y - vec3d1.y) * 0.05D;
             d5 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
 
-            if (d5 > 0.0D)
-            {
+            if (d5 > 0.0D) {
                 this.motionX = this.motionX / d5 * (d5 + d14);
                 this.motionZ = this.motionZ / d5 * (d5 + d14);
             }
@@ -307,28 +293,24 @@ public abstract class EntityTrainBase extends EntityMinecart {
         int j = MathHelper.floor(this.posX);
         int i = MathHelper.floor(this.posZ);
 
-        if (j != pos.getX() || i != pos.getZ())
-        {
+        if (j != pos.getX() || i != pos.getZ()) {
             d5 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
             this.motionX = d5 * (double)(j - pos.getX());
             this.motionZ = d5 * (double)(i - pos.getZ());
         }
 
 
-        if(shouldDoRailFunctions())
-        {
+        if(shouldDoRailFunctions()) {
             ((BlockRailBase)state.getBlock()).onMinecartPass(world, this, pos);
         }
     }
 
     @Override
-    public void moveMinecartOnRail(BlockPos pos)
-    {
+    public void moveMinecartOnRail(BlockPos pos) {
         double mX = this.motionX;
         double mZ = this.motionZ;
 
-        if (this.isBeingRidden())
-        {
+        if (this.isBeingRidden()) {
             mX *= 0.75D;
             mZ *= 0.75D;
         }
@@ -340,16 +322,13 @@ public abstract class EntityTrainBase extends EntityMinecart {
     }
 
     @Override
-    public void killMinecart(DamageSource source)
-    {
+    public void killMinecart(DamageSource source) {
         this.setDead();
 
-        if (this.world.getGameRules().getBoolean("doEntityDrops"))
-        {
+        if (this.world.getGameRules().getBoolean("doEntityDrops")) {
             ItemStack itemstack = new ItemStack(ItemInit.ITEM_TRAIN, 1);
 
-            if (this.hasCustomName())
-            {
+            if (this.hasCustomName()) {
                 itemstack.setStackDisplayName(this.getCustomNameTag());
             }
 

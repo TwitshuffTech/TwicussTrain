@@ -3,6 +3,7 @@ package net.ddns.twicusstumble.twicusstrain.proxy;
 import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
 import net.ddns.twicusstumble.twicusstrain.entity.EntityCargoTrain;
 import net.ddns.twicusstumble.twicusstrain.entity.EntityTrain;
+import net.ddns.twicusstumble.twicusstrain.init.BlockInit;
 import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
 import net.ddns.twicusstumble.twicusstrain.renderer.RenderCargoTrain;
 import net.ddns.twicusstumble.twicusstrain.renderer.RenderTrain;
@@ -26,6 +27,7 @@ public class ClientProxy extends CommonProxy {
         TwicussTrain.logger.info("ClientProxy.registerModels");
 
         ItemInit.ITEMS.forEach(f -> f.registerModel(event));
+        BlockInit.BLOCKS.forEach(f -> f.registerModel(event));
 
         RenderingRegistry.registerEntityRenderingHandler(EntityTrain.class, new IRenderFactory<EntityTrain>() {
             @Override
