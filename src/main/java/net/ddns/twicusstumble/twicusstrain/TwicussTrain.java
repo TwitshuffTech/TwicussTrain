@@ -1,5 +1,6 @@
 package net.ddns.twicusstumble.twicusstrain;
 
+import net.ddns.twicusstumble.twicusstrain.client.gui.GuiThrottleBar;
 import net.ddns.twicusstumble.twicusstrain.proxy.CommonProxy;
 import net.ddns.twicusstumble.twicusstrain.tab.TwicussTrainTab;
 import net.minecraft.block.Block;

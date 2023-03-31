@@ -12,6 +12,9 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -24,13 +27,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class EntityTrainBase extends EntityMinecart {
+    private static final int[][][] MATRIX = new int[][][] {{{0, 0, -1}, {0, 0, 1}}, {{ -1, 0, 0}, {1, 0, 0}}, {{ -1, -1, 0}, {1, 0, 0}}, {{ -1, 0, 0}, {1, -1, 0}}, {{0, 0, -1}, {0, -1, 1}}, {{0, -1, -1}, {0, 0, 1}}, {{0, 0, 1}, {1, 0, 0}}, {{0, 0, 1}, { -1, 0, 0}}, {{0, 0, -1}, { -1, 0, 0}}, {{0, 0, -1}, {1, 0, 0}}};
+    private static final DataParameter<Boolean> isPowerCar = EntityDataManager.createKey(EntityTrainBase.class, DataSerializers.BOOLEAN);
+
     public double maxSpeed = 0.6D;
     public boolean isSelected = false;
     public List<EntityPlayer> players = new ArrayList<>();
-    protected List<EntityTrainBase> connectedTrains = new ArrayList<EntityTrainBase>();
-    private static final int[][][] MATRIX = new int[][][] {{{0, 0, -1}, {0, 0, 1}}, {{ -1, 0, 0}, {1, 0, 0}}, {{ -1, -1, 0}, {1, 0, 0}}, {{ -1, 0, 0}, {1, -1, 0}}, {{0, 0, -1}, {0, -1, 1}}, {{0, -1, -1}, {0, 0, 1}}, {{0, 0, 1}, {1, 0, 0}}, {{0, 0, 1}, { -1, 0, 0}}, {{0, 0, -1}, { -1, 0, 0}}, {{0, 0, -1}, {1, 0, 0}}};
+
+    protected List<EntityTrainBase> connectedTrains = new ArrayList<>();
     protected double connectionDistance = 1.5D;
-    protected boolean isPowerCar = false;
+
     private NBTTagList trainNBTTags = null;
 
     protected boolean canBePushed = false;
@@ -41,6 +47,12 @@ public abstract class EntityTrainBase extends EntityMinecart {
 
     public EntityTrainBase(World worldIn, double x, double y, double z) {
         super(worldIn, x, y, z);
+    }
+
+    @Override
+    public void entityInit() {
+        super.entityInit();
+        this.dataManager.register(isPowerCar, false);
     }
 
     @Override
@@ -97,6 +109,14 @@ public abstract class EntityTrainBase extends EntityMinecart {
         return flag;
     }
 
+    public boolean isPowerCar() {
+        return this.dataManager.get(isPowerCar);
+    }
+
+    public void isPowerCar(boolean value) {
+        this.dataManager.set(isPowerCar, value);
+    }
+
     @Override
     public boolean canBePushed() {
         return this.canBePushed;
@@ -130,19 +150,35 @@ public abstract class EntityTrainBase extends EntityMinecart {
         }
     }
 
+    public void resetPowerCar() {
+        List<EntityTrainBase> callers = new ArrayList<>();
+        resetPowerCar(callers);
+    }
+
+    public void resetPowerCar(List<EntityTrainBase> callers) {
+        callers.add(this);
+        this.dataManager.set(isPowerCar, false);
+        for (int i = 0; i < this.connectedTrains.size(); i++) {
+            EntityTrainBase train = connectedTrains.get(i);
+            if (!callers.contains(train)) {
+                train.resetPowerCar(callers);
+            }
+        }
+    }
+
     public void updateConnection() {
         List<EntityTrainBase> removingCache = new ArrayList<EntityTrainBase>();
         double distanceCache = 0;
 
-        for (int i = 0; i < this.connectedTrains.size(); i++) {
-            EntityTrainBase train = this.connectedTrains.get(i);
+        for (int i = 0; i < connectedTrains.size(); i++) {
+            EntityTrainBase train = connectedTrains.get(i);
 
             if (train.isDead) {
                 removingCache.add(train);
                 train.connectedTrains.remove(this);
-            } else if (!this.isPowerCar) {
-                double distance = this.getDistance(train);
-                if (Math.abs(distance - this.connectionDistance) > distanceCache) {
+            } else if (!this.dataManager.get(isPowerCar)) {
+                double distance = getDistance(train);
+                if (Math.abs(distance - connectionDistance) > distanceCache) {
                     distanceCache = distance;
 
                     double normalizedX = (this.posX - train.posX) / distance;
@@ -192,7 +228,7 @@ public abstract class EntityTrainBase extends EntityMinecart {
                 }
             }
         }
-        this.connectedTrains.removeAll(removingCache);
+        connectedTrains.removeAll(removingCache);
     }
 
     @Override

@@ -9,16 +9,16 @@ import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Rotation;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -34,8 +34,8 @@ public class BlockYellowLine extends BlockHorizontal implements IBlockRegisterEv
 
     private final String name;
 
-    public BlockYellowLine(String name, Material material, float hardness, float resistance, SoundType sound) {
-        super(material);
+    public BlockYellowLine(String name, float hardness, float resistance, SoundType sound) {
+        super(Material.ROCK);
 
         this.name = name;
         this.setTranslationKey(this.name);
@@ -82,6 +82,11 @@ public class BlockYellowLine extends BlockHorizontal implements IBlockRegisterEv
     }
 
     @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+        return face == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
     public boolean isFullBlock(IBlockState state) {
         return false;
     }
@@ -94,6 +99,37 @@ public class BlockYellowLine extends BlockHorizontal implements IBlockRegisterEv
     @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
+    }
+
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+        return super.canPlaceBlockAt(worldIn, pos) && this.canBlockStay(worldIn, pos);
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        this.checkForDrop(worldIn, pos, state);
+    }
+
+    private boolean checkForDrop(World worldIn, BlockPos pos, IBlockState state) {
+        if (!this.canBlockStay(worldIn, pos)) {
+            this.dropBlockAsItem(worldIn, pos, state, 0);
+            worldIn.setBlockToAir(pos);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean canBlockStay(World worldIn, BlockPos pos) {
+        return !worldIn.isAirBlock(pos.down());
+    }
+
+    @Override
+    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
+        for (int i = 0; i < 16; ++i) {
+            items.add(new ItemStack(this, 1, i));
+        }
     }
 
     @Override
