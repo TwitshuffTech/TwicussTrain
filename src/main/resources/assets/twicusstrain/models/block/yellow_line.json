@@ -1,0 +1,21 @@
+{
+	"parent": "block/thin_block",
+	"textures": {
+		"0": "twicusstrain:blocks/yellow_line",
+		"particle": "twicusstrain:blocks/yellow_line"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 8],
+			"to": [16, 0.1, 16],
+			"faces": {
+				"down": {"uv": [16, 0, 0, 8], "texture": "#0", "cullface": "down"},
+				"up": {"uv": [16, 8, 0, 0], "texture": "#0"},
+				"north": {"uv": [0, 0, 16, 1], "texture": "#0", "cullface": "north"},
+				"south": {"uv": [0, 0, 16, 1], "texture": "#0", "cullface": "south"},
+				"west": {"uv": [0, 0, 8, 1], "texture": "#0", "cullface": "west"},
+				"east": {"uv": [0, 0, 8, 1], "texture": "#0", "cullface": "east"}
+			}
+		}
+	]
+}

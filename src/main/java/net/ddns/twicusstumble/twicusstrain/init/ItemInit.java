@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemInit {
-    public static final List<IItemRegisterEvent> ITEMS = new ArrayList<IItemRegisterEvent>();
+    public static final List<IItemRegisterEvent> ITEMS = new ArrayList<>();
+    public static final List<Item> ITEM_BLOCKS = new ArrayList<>();
 
     public static final Item ITEM_TRAIN = new ItemTrain("train");
     public static final Item ITEM_CARGO_TRAIN = new ItemCargoTrain("cargo_train");

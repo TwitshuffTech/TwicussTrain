@@ -3,6 +3,9 @@ item.train.name=Twicuss Train
 item.cargo_train.name=Twicuss Train with Chest
 item.wrench.name=レンチ
 
+# Blocks
+tile.yellow_line.name=点字ブロック
+
 # Entities
 entity.cargo_train.name=Twicuss Train with Chest
 

@@ -15,6 +15,9 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -28,8 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntityTrain extends EntityTrainBase {
-    public double throttle = 0;
-    public double throttleSpeed = 0.1D;
+    private static final DataParameter<Float> throttle = EntityDataManager.createKey(EntityTrain.class, DataSerializers.FLOAT);
+
+    protected float throttleSpeed = 0.1F;
+
+    private float maxThrottle = 1.0F;
+    private float minThrottle = -0.2F;
 
     public EntityTrain(World worldIn) {
         super(worldIn);
@@ -37,6 +44,12 @@ public class EntityTrain extends EntityTrainBase {
 
     public EntityTrain(World worldIn, double x, double y, double z) {
         super(worldIn, x, y, z);
+    }
+
+    @Override
+    public void entityInit() {
+        super.entityInit();
+        this.dataManager.register(throttle, 0.0F);
     }
 
     @Override
@@ -71,27 +84,36 @@ public class EntityTrain extends EntityTrainBase {
         }
     }
 
+    public float getThrottle() {
+        return this.dataManager.get(throttle);
+    }
+
+    public float getMaxThrottle() {
+        return maxThrottle;
+    }
+
+    public float getMinThrottle() {
+        return minThrottle;
+    }
+
     public void changeThrottle(double input) {
+        float throttleValue = this.dataManager.get(throttle);
         if (input > 0) {
-            this.throttle += this.throttleSpeed;
+            throttleValue += this.throttleSpeed;
         } else if (input < 0) {
-            this.throttle -= this.throttleSpeed;
+            throttleValue -= this.throttleSpeed;
         }
 
-        this.throttle = MathHelper.clamp(this.throttle, -0.1, 1);
+        throttleValue = MathHelper.clamp(throttleValue, minThrottle, maxThrottle);
+        this.dataManager.set(throttle, throttleValue);
     }
 
     public void applyThrottle() {
         double squaredSpeed = this.motionX * this.motionX + this.motionZ * this.motionZ;
-        double targetSpeed = this.maxSpeed * this.throttle;
+        double targetSpeed = this.maxSpeed * this.dataManager.get(throttle);
 
         Entity entity = this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
 
-        if (squaredSpeed < 0.0001D) {
-            if (this.isPowerCar) {
-                this.isPowerCar = false;
-            }
-        }
         if (entity instanceof EntityLivingBase) {
             if (targetSpeed > 0 && squaredSpeed < 0.0001D && (double)((EntityLivingBase)entity).moveForward > 0.0D) {
                 double x = -Math.sin((double)(entity.rotationYaw * 0.017453292F));
@@ -100,7 +122,8 @@ public class EntityTrain extends EntityTrainBase {
                 this.motionX += x * 0.1D;
                 this.motionZ += z * 0.1D;
 
-                this.isPowerCar = true;
+                resetPowerCar();
+                this.isPowerCar(true);
             } else {
                 if (targetSpeed * Math.abs(targetSpeed) > squaredSpeed) {
                     this.motionX *= 1.1D;
