@@ -27,7 +27,7 @@ public class TwicussTrain {
 
     public static final String MOD_ID = "twicusstrain";
     public static final String MOD_NAME = "Twicuss Train";
-    public static final String VERSION = "1.1.1";
+    public static final String VERSION = "1.2.0";
 
     public static Logger logger;
 
