@@ -1,5 +1,6 @@
 package net.ddns.twicusstumble.twicusstrain.entity;
 
+import net.ddns.twicusstumble.twicusstrain.TwicussTrain;
 import net.ddns.twicusstumble.twicusstrain.init.ItemInit;
 import net.ddns.twicusstumble.twicusstrain.item.ItemWrench;
 import net.minecraft.block.BlockRailBase;
@@ -31,6 +32,9 @@ public abstract class EntityTrainBase extends EntityMinecart {
     private static final DataParameter<Boolean> isPowerCar = EntityDataManager.createKey(EntityTrainBase.class, DataSerializers.BOOLEAN);
 
     public double maxSpeed = 0.6D;
+    public double minSpeed = 0.001D;
+    protected double force = 0;
+    public double airResistance = 0.01D;
     public boolean isSelected = false;
     public List<EntityPlayer> players = new ArrayList<>();
 
@@ -127,8 +131,13 @@ public abstract class EntityTrainBase extends EntityMinecart {
         super.onUpdate();
 
         if (!this.world.isRemote) {
+            applyForce();
+
             this.reconnect();
             this.updateConnection();
+
+            force = 0;
+            this.applyDrag();
         }
     }
 
@@ -229,6 +238,29 @@ public abstract class EntityTrainBase extends EntityMinecart {
             }
         }
         connectedTrains.removeAll(removingCache);
+    }
+
+    @Override
+    protected void applyDrag() {
+        double speed = Math.sqrt(motionX * motionX + motionZ * motionZ);
+        force -= (airResistance * speed);
+    }
+
+    protected void applyForce() {
+        double speed = Math.sqrt(motionX * motionX + motionZ * motionZ);
+        double forceX = motionX == 0 ? 0 : motionX * (force / speed);
+        double forceZ = motionZ == 0 ? 0 : motionZ * (force / speed);
+        TwicussTrain.logger.info(force + " / " + forceX + " : " + forceZ);
+        motionX += forceX;
+        motionY += 0;
+        motionZ += forceZ;
+
+        if (motionX < minSpeed) {
+            motionX = 0;
+        }
+        if (motionZ < minSpeed) {
+            motionZ = 0;
+        }
     }
 
     @Override

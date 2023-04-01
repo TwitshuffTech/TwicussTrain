@@ -126,11 +126,9 @@ public class EntityTrain extends EntityTrainBase {
                 this.isPowerCar(true);
             } else {
                 if (targetSpeed * Math.abs(targetSpeed) > squaredSpeed) {
-                    this.motionX *= 1.1D;
-                    this.motionZ *= 1.1D;
+                    force += 0.1D;
                 } else if (targetSpeed * Math.abs(targetSpeed) < squaredSpeed) {
-                    this.motionX *= 0.9D;
-                    this.motionZ *= 0.9D;
+                    force -= 0.1D;
                 }
             }
         }
